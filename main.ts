@@ -5,6 +5,7 @@ namespace SpriteKind {
     export const enemy2 = SpriteKind.create()
     export const snt = SpriteKind.create()
 }
+// -set amination
 controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
     animation.runImageAnimation(
     mySprite,
@@ -98,6 +99,10 @@ controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
     false
     )
 })
+// -set player's melee attack 
+// -set attack animation
+// -if player face to the right, attack the right way
+// --if player face to the left, attack the left way
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
     if (right == true) {
         projectile = sprites.createProjectileFromSprite(img`
@@ -407,10 +412,21 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
     	
     }
 })
+// -set boss hp bar decreasement
+// -play music for boss hp decrasement
 sprites.onOverlap(SpriteKind.Projectile, SpriteKind.Boss, function (sprite, otherSprite) {
     statusbars.getStatusBarAttachedTo(StatusBarKind.EnemyHealth, otherSprite).value += -20
     music.play(music.createSoundEffect(WaveShape.Square, 200, 1, 255, 0, 100, SoundExpressionEffect.None, InterpolationCurve.Curve), music.PlaybackMode.UntilDone)
 })
+// -when enemy overlap player, destroy enemy
+// -set  music for life decreasing
+sprites.onOverlap(SpriteKind.Player, SpriteKind.enemy2, function (sprite, otherSprite) {
+    sprites.destroy(otherSprite)
+    info.changeLifeBy(-1)
+    music.play(music.createSoundEffect(WaveShape.Sine, 1069, 1, 255, 0, 500, SoundExpressionEffect.Tremolo, InterpolationCurve.Linear), music.PlaybackMode.UntilDone)
+})
+// -set animation
+// -determine where player face to
 controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
     animation.runImageAnimation(
     mySprite,
@@ -505,6 +521,9 @@ controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
     )
     right = false
 })
+// -change background music and image
+// -lntroduce the rules
+// -destroy paimon to continue the game
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Paimon, function (sprite, otherSprite) {
     music.stopAllSounds()
     music.play(music.stringPlayable("B G F E A C D C5 ", 120), music.PlaybackMode.LoopingInBackground)
@@ -655,6 +674,10 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.Paimon, function (sprite, otherS
     effects.clearParticles(npc)
     npc.destroy()
 })
+// -set boss's dead animation
+// -continue the story
+// -change to the final background image and music
+// -end the story
 statusbars.onZero(StatusBarKind.EnemyHealth, function (status) {
     sprites.destroy(statusbar.spriteAttachedTo(), effects.fire, 2000)
     music.play(music.createSoundEffect(WaveShape.Noise, 2780, 179, 255, 0, 2000, SoundExpressionEffect.Warble, InterpolationCurve.Logarithmic), music.PlaybackMode.UntilDone)
@@ -806,14 +829,19 @@ statusbars.onZero(StatusBarKind.EnemyHealth, function (status) {
         . f 6 1 1 1 1 6 6 6 6 6 c . . . 
         . . f f c c c c c c c c . . . . 
         `, SpriteKind.Food)
-    mySprite.setPosition(69, 77)
-    saint.setPosition(49, 73)
-    npc.setPosition(106, 71)
+    mySprite.setPosition(72, 86)
+    saint.setPosition(41, 75)
+    npc.setPosition(117, 67)
     saint.sayText("Thanks for saving our world")
     npc.sayText("hope you have fun while playing :)")
     pause(5000)
     carnival.onGameOverExpanded(carnival.WinTypes.Win, effects.starField)
 })
+// -when player done the challenge, change the background music and image
+// -set sprite to saint
+// -set the boss
+// -set boss hp bar
+// -set saint to continue the story
 info.onScore(100, function () {
     music.stopAllSounds()
     music.play(music.createSong(hex`0078000408020600001c00010a006400f401640000040000000000000000000000000005000004060018001c00012a01001c000f05001202c102c20100040500280000006400280003140006020004200010001400012a14001800012518001c00031e22241c002000012420002400012902001c000c960064006d019001000478002c010000640032000000000a06000506000c001000012503001c0001dc00690000045e010004000000000000000000000564000104000319000000040001250400080002242a08000c0001200c001000012a08001c000e050046006603320000040a002d00000064001400013200020100021a000000040001292400280002202a28002c00012430003400021d2209010e02026400000403780000040a000301000000640001c80000040100000000640001640000040100000000fa0004af00000401c80000040a00019600000414000501006400140005010000002c0104dc00000401fa0000040a0001c8000004140005d0076400140005d0070000c800029001f40105c201f4010a0005900114001400039001000005c201f4010500058403050032000584030000fa00049001000005c201f4010500058403c80032000584030500640005840300009001049001000005c201f4010500058403c80064000584030500c8000584030000f40105ac0d000404a00f00000a0004ac0d2003010004a00f0000280004ac0d9001010004a00f0000280002d00700040408070f0064000408070000c80003c800c8000e7d00c80019000e64000f0032000e78000000fa00032c01c8000ee100c80019000ec8000f0032000edc000000fa0003f401c8000ea901c80019000e90010f0032000ea4010000fa0001c8000004014b000000c800012c01000401c8000000c8000190010004012c010000c80002c800000404c8000f0064000496000000c80002c2010004045e010f006400042c010000640002c409000404c4096400960004f6090000f40102b80b000404b80b64002c0104f40b0000f401022003000004200300040a000420030000ea01029001000004900100040a000490010000900102d007000410d0076400960010d0070000c8000600240025000107`), music.PlaybackMode.LoopingInBackground)
@@ -1008,6 +1036,8 @@ info.onScore(100, function () {
     effects.clearParticles(saint)
     info.setScore(0)
 })
+// -set amination
+// -determine where player face to
 controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
     animation.runImageAnimation(
     mySprite,
@@ -1102,15 +1132,11 @@ controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
     )
     right = true
 })
+// -on enemy's dead, increace the score
 sprites.onDestroyed(SpriteKind.enemy2, function (sprite) {
     info.changeScoreBy(10)
-    music.play(music.createSoundEffect(WaveShape.Triangle, 2744, 3742, 255, 0, 75, SoundExpressionEffect.Vibrato, InterpolationCurve.Curve), music.PlaybackMode.UntilDone)
 })
-sprites.onOverlap(SpriteKind.enemy2, SpriteKind.Player, function (sprite, otherSprite) {
-    sprites.destroy(sprite)
-    info.changeLifeBy(-1)
-    music.play(music.createSoundEffect(WaveShape.Sine, 1069, 1, 255, 0, 500, SoundExpressionEffect.Tremolo, InterpolationCurve.Linear), music.PlaybackMode.UntilDone)
-})
+// -set amination
 controller.down.onEvent(ControllerButtonEvent.Pressed, function () {
     animation.runImageAnimation(
     mySprite,
@@ -1204,15 +1230,25 @@ controller.down.onEvent(ControllerButtonEvent.Pressed, function () {
     false
     )
 })
+// -set music when score increase
+// -set enemy's dead animation
 sprites.onOverlap(SpriteKind.Projectile, SpriteKind.enemy2, function (sprite, otherSprite) {
     sprites.destroy(otherSprite, effects.bubbles, 100)
     music.play(music.createSoundEffect(WaveShape.Sine, 5000, 0, 255, 0, 500, SoundExpressionEffect.None, InterpolationCurve.Linear), music.PlaybackMode.UntilDone)
 })
+// -when player's life=0 , game over
+// -set lose music
+// -set lose animation
 info.onLifeZero(function () {
     music.stopAllSounds()
     music.play(music.stringPlayable("C5 B A G F E D C ", 120), music.PlaybackMode.UntilDone)
     carnival.onGameOverExpanded(carnival.WinTypes.Lose, effects.dissolve)
 })
+// -change the background music
+// -introduce how to play
+// -spwan enemies 
+// -set enemy follow the player
+// -set enemy's animation
 sprites.onDestroyed(SpriteKind.Paimon, function (sprite) {
     music.stopAllSounds()
     game.showLongText("press A button to melee attack", DialogLayout.Bottom)
@@ -1309,9 +1345,10 @@ sprites.onDestroyed(SpriteKind.Paimon, function (sprite) {
     }
 })
 // -set background and dialogues
-// -player have to type their name to continue
+// -player has to type their name to continue
 // -set sprites with dialogues
 // -introduce the story
+// -set background music
 let myEnemy2: Sprite = null
 let Myboss: Sprite = null
 let saint: Sprite = null
